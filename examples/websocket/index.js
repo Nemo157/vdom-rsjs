@@ -9,7 +9,7 @@ function start() {
   let tree, rootNode
   let socket = new WebSocket("ws://localhost:8080", ["vdom-rsjs-websocket"])
 
-  let onaction = action => {
+  let onaction = (event, action) => {
     socket.send(JSON.stringify(action))
   }
 
