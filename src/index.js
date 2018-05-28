@@ -11,7 +11,7 @@ function omap(o, f) {
 export function props(data, onaction) {
   return omap(data, value => {
     if (value.action) {
-      return () => onaction(value.action)
+      return (event) => onaction(event, value.action)
     } else if (value.text) {
       return value.text
     } else if (value.object) {
