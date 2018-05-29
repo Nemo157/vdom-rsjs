@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::HashMap;
 
 #[serde(rename_all = "lowercase")]
@@ -55,5 +56,23 @@ impl<A> VTag<A> {
             .map(|c| c.map_action(f))
             .collect();
         VTag { name, properties, children, key, namespace }
+    }
+}
+
+impl<A> From<VTag<A>> for VNode<A> {
+    fn from(tag: VTag<A>) -> Self {
+        VNode::Tag(tag)
+    }
+}
+
+impl<A, S: Into<Cow<'static, str>>> From<S> for VNode<A> {
+    fn from(s: S) -> Self {
+        VNode::Text(s.into().into_owned())
+    }
+}
+
+impl<A, S: Into<Cow<'static, str>>> From<S> for VProperty<A> {
+    fn from(s: S) -> Self {
+        VProperty::Text(s.into().into_owned())
     }
 }

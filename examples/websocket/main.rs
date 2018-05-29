@@ -7,7 +7,6 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 
-use std::collections::HashMap;
 use std::fmt::Debug;
 use std::net::SocketAddr;
 
@@ -17,7 +16,7 @@ use websocket::async::Server;
 
 use tokio_core::reactor::{Handle, Core};
 use futures::{Future, Sink, Stream};
-use vdom_rsjs::{VNode, VTag, VProperty};
+use vdom_rsjs::{VNode, VProperty, tag};
 
 type ShouldRender = bool;
 
@@ -47,48 +46,16 @@ impl Counter {
     }
 
     fn render(&self) -> VNode<Action> {
-        VNode::Tag(VTag {
-            name: "div".into(),
-            properties: HashMap::new(),
-            children: vec![
-                VNode::Text(self.count.to_string()),
-                VNode::Tag(VTag {
-                    name: "br".into(),
-                    properties: HashMap::new(),
-                    children: vec![],
-                    key: None,
-                    namespace: None,
-                }),
-                VNode::Tag(VTag {
-                    name: "button".into(),
-                    properties: {
-                        let mut props = HashMap::new();
-                        props.insert("onclick".into(), VProperty::Action(Action::Increment));
-                        props
-                    },
-                    children: vec![
-                        VNode::Text("increment".into()),
-                    ],
-                    key: None,
-                    namespace: None,
-                }),
-                VNode::Tag(VTag {
-                    name: "button".into(),
-                    properties: {
-                        let mut props = HashMap::new();
-                        props.insert("onclick".into(), VProperty::Action(Action::Decrement));
-                        props
-                    },
-                    children: vec![
-                        VNode::Text("decrement".into()),
-                    ],
-                    key: None,
-                    namespace: None,
-                }),
-            ],
-            key: None,
-            namespace: None,
-        })
+        tag("div")
+            .child(self.count.to_string())
+            .child(tag("br"))
+            .child(tag("button")
+                .prop("onclick", VProperty::Action(Action::Increment))
+                .child("increment"))
+            .child(tag("button")
+                .prop("onclick", VProperty::Action(Action::Decrement))
+                .child("decrement"))
+            .build()
     }
 }
 
