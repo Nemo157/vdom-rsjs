@@ -4,15 +4,7 @@ use std::borrow::Cow;
 
 use {VNode, VTag, VProperty};
 
-pub struct TagBuilder<A> {
-    name: String,
-    properties: HashMap<String, VProperty<A>>,
-    children: Vec<VNode<A>>,
-    key: Option<String>,
-    namespace: Option<String>,
-}
-
-impl<A> TagBuilder<A> {
+impl<A> VTag<A> {
     pub fn prop(mut self, prop: impl Into<Cow<'static, str>>, value: impl Into<VProperty<A>>) -> Self {
         self.properties.insert(prop.into().into_owned(), value.into());
         self
@@ -32,30 +24,16 @@ impl<A> TagBuilder<A> {
         self.children.extend(children.into_iter().map(|c| c.into()));
         self
     }
-
-    pub fn build(self) -> VNode<A> {
-        VNode::Tag(VTag {
-            name: self.name,
-            properties: self.properties,
-            children: self.children,
-            key: self.key,
-            namespace: self.namespace,
-        })
-    }
 }
 
-pub fn tag<A>(tag: impl Into<Cow<'static, str>>) -> TagBuilder<A> {
-    TagBuilder {
-        name: tag.into().into_owned(),
-        properties: HashMap::new(),
-        children: Vec::new(),
-        key: None,
-        namespace: None,
-    }
-}
-
-impl<A> From<TagBuilder<A>> for VNode<A> {
-    fn from(builder: TagBuilder<A>) -> Self {
-        builder.build()
+impl<A> VTag<A> {
+    pub fn new(tag: impl Into<Cow<'static, str>>) -> Self {
+        VTag {
+            name: tag.into().into_owned(),
+            properties: HashMap::new(),
+            children: Vec::new(),
+            key: None,
+            namespace: None,
+        }
     }
 }

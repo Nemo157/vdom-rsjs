@@ -16,7 +16,7 @@ use websocket::async::Server;
 
 use tokio_core::reactor::{Handle, Core};
 use futures::{Future, Sink, Stream};
-use vdom_rsjs::{VNode, VProperty, tag};
+use vdom_rsjs::{VTag, VNode, VProperty};
 
 type ShouldRender = bool;
 
@@ -46,16 +46,16 @@ impl Counter {
     }
 
     fn render(&self) -> VNode<Action> {
-        tag("div")
+        VTag::new("div")
             .child(self.count.to_string())
-            .child(tag("br"))
-            .child(tag("button")
+            .child(VTag::new("br"))
+            .child(VTag::new("button")
                 .prop("onclick", VProperty::Action(Action::Increment))
                 .child("increment"))
-            .child(tag("button")
+            .child(VTag::new("button")
                 .prop("onclick", VProperty::Action(Action::Decrement))
                 .child("decrement"))
-            .build()
+            .into()
     }
 }
 

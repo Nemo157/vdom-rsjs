@@ -11,4 +11,3 @@ pub use node::{VNode, VTag, VProperty};
 pub use patch::{VPatch};
 
 pub use diff::diff;
-pub use build::tag;
