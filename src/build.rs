@@ -2,7 +2,9 @@ use std::collections::HashMap;
 use std::iter::IntoIterator;
 use std::borrow::Cow;
 
-use {VNode, VTag, VProperty};
+use im::Vector;
+
+use {VTag, VProperty, node::IntoSharedVNode};
 
 impl<A> VTag<A> {
     pub fn prop(mut self, prop: impl Into<Cow<'static, str>>, value: impl Into<VProperty<A>>) -> Self {
@@ -15,13 +17,13 @@ impl<A> VTag<A> {
         self
     }
 
-    pub fn child(mut self, child: impl Into<VNode<A>>) -> Self {
-        self.children.push(child.into());
+    pub fn child(mut self, child: impl IntoSharedVNode<A>) -> Self {
+        self.children.push_back_mut(child.into_vnode());
         self
     }
 
-    pub fn children(mut self, children: impl IntoIterator<Item = impl Into<VNode<A>>>) -> Self {
-        self.children.extend(children.into_iter().map(|c| c.into()));
+    pub fn children(mut self, children: impl IntoIterator<Item = impl IntoSharedVNode<A>>) -> Self {
+        self.children.extend(children.into_iter().map(|c| c.into_vnode()));
         self
     }
 }
@@ -31,7 +33,7 @@ impl<A> VTag<A> {
         VTag {
             name: tag.into().into_owned(),
             properties: HashMap::new(),
-            children: Vec::new(),
+            children: Vector::new(),
             key: None,
             namespace: None,
         }
