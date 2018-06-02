@@ -4,8 +4,10 @@ use std::collections::HashMap;
 
 use im::Vector;
 
+pub type VProperties<A> = HashMap<Cow<'static, str>, VProperty<A>>;
+
 #[serde(rename_all = "lowercase")]
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub enum VProperty<A> {
     Action(A),
     Text(Cow<'static, str>),
@@ -13,16 +15,16 @@ pub enum VProperty<A> {
 }
 
 #[serde(rename_all = "lowercase")]
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub enum VNode<A> {
     Tag(VTag<A>),
     Text(Cow<'static, str>),
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct VTag<A> {
     pub name: Cow<'static, str>,
-    pub properties: HashMap<Cow<'static, str>, VProperty<A>>,
+    pub properties: VProperties<A>,
     pub children: Vector<VNode<A>>,
     pub key: Option<Cow<'static, str>>,
     pub namespace: Option<Cow<'static, str>>,
@@ -37,7 +39,7 @@ pub struct VTag<A> {
 //         }
 //     }
 // }
-//
+
 // impl<A> VNode<A> {
 //     pub fn map_action<B>(self, f: &impl Fn(A) -> B) -> VNode<B> {
 //         match self {
@@ -46,8 +48,14 @@ pub struct VTag<A> {
 //         }
 //     }
 // }
-//
-// impl<A> VTag<A> {
+
+impl<A> VTag<A> {
+    pub(crate) fn is_same_tag(&self, other: &VTag<A>) -> bool {
+        self.name == other.name
+            && self.namespace == other.namespace
+            && self.key == other.key
+    }
+
 //     pub fn map_action<B>(self, f: &impl Fn(A) -> B) -> VTag<B> {
 //         let VTag { name, properties, children, key, namespace } = self;
 //         let properties = properties
@@ -60,7 +68,7 @@ pub struct VTag<A> {
 //             .collect();
 //         VTag { name, properties, children, key, namespace }
 //     }
-// }
+}
 
 pub trait IntoSharedVNode<A> {
     fn into_vnode(self) -> Arc<VNode<A>>;

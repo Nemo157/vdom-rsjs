@@ -9,7 +9,7 @@ mod diff;
 mod build;
 pub mod render;
 
-pub use node::{VNode, VTag, VProperty};
-pub use patch::{VPatch};
+pub use node::{VNode, VTag, VProperty, VProperties};
+pub use patch::{VPatch, VPatchNode, VPatches, VPropPatch};
 
 pub use diff::diff;
