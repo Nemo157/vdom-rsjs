@@ -8,24 +8,24 @@ use im::Vector;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum VProperty<A> {
     Action(A),
-    Text(String),
-    Object(HashMap<String, String>),
+    Text(Cow<'static, str>),
+    Object(HashMap<Cow<'static, str>, Cow<'static, str>>),
 }
 
 #[serde(rename_all = "lowercase")]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum VNode<A> {
     Tag(VTag<A>),
-    Text(String),
+    Text(Cow<'static, str>),
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct VTag<A> {
-    pub name: String,
-    pub properties: HashMap<String, VProperty<A>>,
+    pub name: Cow<'static, str>,
+    pub properties: HashMap<Cow<'static, str>, VProperty<A>>,
     pub children: Vector<VNode<A>>,
-    pub key: Option<String>,
-    pub namespace: Option<String>,
+    pub key: Option<Cow<'static, str>>,
+    pub namespace: Option<Cow<'static, str>>,
 }
 
 // impl<A> VProperty<A> {
@@ -86,13 +86,13 @@ impl<A> IntoSharedVNode<A> for VTag<A> {
 
 impl<A> IntoSharedVNode<A> for &'static str {
     fn into_vnode(self) -> Arc<VNode<A>> {
-        Arc::new(VNode::Text(self.to_owned()))
+        Arc::new(VNode::Text(self.into()))
     }
 }
 
 impl<A> IntoSharedVNode<A> for String {
     fn into_vnode(self) -> Arc<VNode<A>> {
-        Arc::new(VNode::Text(self))
+        Arc::new(VNode::Text(self.into()))
     }
 }
 
@@ -104,12 +104,12 @@ impl<A> From<VTag<A>> for VNode<A> {
 
 impl<A, S: Into<Cow<'static, str>>> From<S> for VNode<A> {
     fn from(s: S) -> Self {
-        VNode::Text(s.into().into_owned())
+        VNode::Text(s.into())
     }
 }
 
 impl<A, S: Into<Cow<'static, str>>> From<S> for VProperty<A> {
     fn from(s: S) -> Self {
-        VProperty::Text(s.into().into_owned())
+        VProperty::Text(s.into())
     }
 }

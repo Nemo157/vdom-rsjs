@@ -8,12 +8,12 @@ use {VTag, VProperty, node::IntoSharedVNode};
 
 impl<A> VTag<A> {
     pub fn prop(mut self, prop: impl Into<Cow<'static, str>>, value: impl Into<VProperty<A>>) -> Self {
-        self.properties.insert(prop.into().into_owned(), value.into());
+        self.properties.insert(prop.into(), value.into());
         self
     }
 
     pub fn props(mut self, props: impl IntoIterator<Item = (impl Into<Cow<'static, str>>, impl Into<VProperty<A>>)>) -> Self {
-        self.properties.extend(props.into_iter().map(|(s, p)| (s.into().into_owned(), p.into())));
+        self.properties.extend(props.into_iter().map(|(s, p)| (s.into(), p.into())));
         self
     }
 
@@ -31,7 +31,7 @@ impl<A> VTag<A> {
 impl<A> VTag<A> {
     pub fn new(tag: impl Into<Cow<'static, str>>) -> Self {
         VTag {
-            name: tag.into().into_owned(),
+            name: tag.into(),
             properties: HashMap::new(),
             children: Vector::new(),
             key: None,
