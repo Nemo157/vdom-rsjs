@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-use ::{ VNode, VTag, VProperty };
+use serde_derive::{Serialize, Deserialize};
+
+use crate::{ VNode, VTag, VProperty };
 
 #[derive(Serialize, Deserialize)]
 pub struct Remove {

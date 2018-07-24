@@ -3,6 +3,7 @@ use std::borrow::Cow;
 use std::collections::HashMap;
 
 use im::Vector;
+use serde_derive::{Serialize, Deserialize};
 
 #[serde(rename_all = "lowercase")]
 #[derive(Serialize, Deserialize, Debug, Clone)]

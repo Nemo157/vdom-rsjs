@@ -1,7 +1,10 @@
+cargo-features = ["edition"]
+
 [package]
 authors = ["Wim Looman <wim@nemo157.com>"]
 name = "vdom-rsjs"
 version = "0.1.0"
+edition = "2018"
 
 [dependencies]
 serde_derive = "1.0.60"

@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use std::collections::HashMap;
 
-use VNode;
+use crate::VNode;
 
 struct CacheValue<A> {
     used: bool,
