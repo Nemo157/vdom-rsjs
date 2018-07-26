@@ -25,6 +25,9 @@ pub struct TopCache<A> {
     cache: HashMap<*const Render<A>, CacheValue<A>>,
 }
 
+// Safety: Uhhh, probably? There's a reason this isn't in master yet
+unsafe impl<A> Send for TopCache<A> { }
+
 pub struct ChildCache<'a, A: 'a> {
     top: &'a mut TopCache<A>,
 }
