@@ -19,6 +19,18 @@ impl<A> VTag<A> {
         self
     }
 
+    pub fn attrs(mut self, attrs: impl IntoIterator<Item = (impl Into<Cow<'static, str>>, impl Into<Cow<'static, str>>)>) -> Self {
+        {
+            let attributes = self.properties.entry("attributes".into()).or_insert(VProperty::Object(HashMap::new()));
+            if let VProperty::Object(attributes) = attributes {
+                attributes.extend(attrs.into_iter().map(|(a, v)| (a.into(), v.into())));
+            } else {
+                panic!("Unexpected property type for attributes: {:?}", attributes);
+            }
+        }
+        self
+    }
+
     pub fn prop(mut self, prop: impl Into<Cow<'static, str>>, value: impl Into<VProperty<A>>) -> Self {
         self.properties.insert(prop.into(), value.into());
         self
