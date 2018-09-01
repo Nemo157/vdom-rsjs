@@ -7,6 +7,18 @@ use im::Vector;
 use {VTag, VProperty, node::IntoSharedVNode};
 
 impl<A> VTag<A> {
+    pub fn attr(mut self, attr: impl Into<Cow<'static, str>>, value: impl Into<Cow<'static, str>>) -> Self {
+        {
+            let attrs = self.properties.entry("attributes".into()).or_insert(VProperty::Object(HashMap::new()));
+            if let VProperty::Object(attrs) = attrs {
+                attrs.insert(attr.into(), value.into());
+            } else {
+                panic!("Unexpected property type for attributes: {:?}", attrs);
+            }
+        }
+        self
+    }
+
     pub fn prop(mut self, prop: impl Into<Cow<'static, str>>, value: impl Into<VProperty<A>>) -> Self {
         self.properties.insert(prop.into(), value.into());
         self

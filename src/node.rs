@@ -1,11 +1,12 @@
 use std::sync::Arc;
 use std::borrow::Cow;
 use std::collections::HashMap;
+use std::fmt;
 
 use im::Vector;
 
 #[serde(rename_all = "lowercase")]
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub enum VProperty<A> {
     Action(A),
     Text(Cow<'static, str>),
@@ -111,5 +112,36 @@ impl<A, S: Into<Cow<'static, str>>> From<S> for VNode<A> {
 impl<A, S: Into<Cow<'static, str>>> From<S> for VProperty<A> {
     fn from(s: S) -> Self {
         VProperty::Text(s.into())
+    }
+}
+
+impl<A> fmt::Debug for VProperty<A> {
+    #[cfg(feature = "nightly")]
+    default fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            VProperty::Action(_) => f.debug_tuple("Action").field(&"<non-debug>").finish(),
+            VProperty::Text(text) => f.debug_tuple("Text").field(text).finish(),
+            VProperty::Object(object) => f.debug_tuple("Object").field(object).finish(),
+        }
+    }
+
+    #[cfg(not(feature = "nightly"))]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            VProperty::Action(_) => f.debug_tuple("Action").field(&"<non-debug>").finish(),
+            VProperty::Text(text) => f.debug_tuple("Text").field(text).finish(),
+            VProperty::Object(object) => f.debug_tuple("Object").field(object).finish(),
+        }
+    }
+}
+
+#[cfg(feature = "nightly")]
+impl<A: fmt::Debug> fmt::Debug for VProperty<A> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            VProperty::Action(action) => f.debug_tuple("Action").field(action).finish(),
+            VProperty::Text(text) => f.debug_tuple("Text").field(text).finish(),
+            VProperty::Object(object) => f.debug_tuple("Object").field(object).finish(),
+        }
     }
 }

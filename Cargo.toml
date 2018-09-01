@@ -19,3 +19,7 @@ features = ["rc"]
 [dependencies.im]
 version = "10.2.0"
 features = ["serde"]
+
+[features]
+nightly = []
+default = []
