@@ -97,6 +97,12 @@ impl<A> IntoSharedVNode<A> for String {
     }
 }
 
+impl<A> IntoSharedVNode<A> for Cow<'static, str> {
+    fn into_vnode(self) -> Arc<VNode<A>> {
+        Arc::new(VNode::Text(self))
+    }
+}
+
 impl<A> From<VTag<A>> for VNode<A> {
     fn from(tag: VTag<A>) -> Self {
         VNode::Tag(tag)
