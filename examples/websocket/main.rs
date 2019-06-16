@@ -1,22 +1,16 @@
-extern crate websocket;
-extern crate futures;
-extern crate tokio_core;
-extern crate vdom_rsjs;
-extern crate serde_json;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
+#![warn(rust_2018_idioms)]
 
 use std::fmt::Debug;
 use std::net::SocketAddr;
 
 use websocket::message::{Message, OwnedMessage};
 use websocket::server::InvalidConnection;
-use websocket::async::Server;
+use websocket::r#async::Server;
 
 use tokio_core::reactor::{Handle, Core};
 use futures::{Future, Sink, Stream};
 use vdom_rsjs::{VTag, VNode, VProperty};
+use serde_derive::{Serialize, Deserialize};
 
 type ShouldRender = bool;
 

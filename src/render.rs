@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use std::collections::HashMap;
 
-use VNode;
+use crate::VNode;
 
 struct CacheValue<A> {
     used: bool,
@@ -10,11 +10,11 @@ struct CacheValue<A> {
 }
 
 pub trait Cache<A> {
-    fn render(&mut self, item: Arc<Render<A>>) -> Arc<VNode<A>>;
+    fn render(&mut self, item: Arc<dyn Render<A>>) -> Arc<VNode<A>>;
 }
 
 pub trait Render<A> {
-    fn render(&self, cache: &mut Cache<A>) -> VNode<A>;
+    fn render(&self, cache: &mut dyn Cache<A>) -> VNode<A>;
 }
 
 pub struct NoCache {
@@ -22,10 +22,10 @@ pub struct NoCache {
 }
 
 pub struct TopCache<A> {
-    cache: HashMap<*const Render<A>, CacheValue<A>>,
+    cache: HashMap<*const dyn Render<A>, CacheValue<A>>,
 }
 
-pub struct ChildCache<'a, A: 'a> {
+pub struct ChildCache<'a, A> {
     top: &'a mut TopCache<A>,
 }
 
@@ -36,7 +36,7 @@ impl<A> TopCache<A> {
         }
     }
 
-    fn get(&mut self, item: Arc<Render<A>>) -> (Option<Arc<VNode<A>>>, Arc<Render<A>>) {
+    fn get(&mut self, item: Arc<dyn Render<A>>) -> (Option<Arc<VNode<A>>>, Arc<dyn Render<A>>) {
         let ptr = Arc::into_raw(item);
         let node = self.cache.get_mut(&ptr).map(CacheValue::node);
         // Safe because we only lent the pointer out to a function without a
@@ -55,7 +55,7 @@ impl NoCache {
 }
 
 impl<A> Cache<A> for TopCache<A> {
-    fn render(&mut self, item: Arc<Render<A>>) -> Arc<VNode<A>> {
+    fn render(&mut self, item: Arc<dyn Render<A>>) -> Arc<VNode<A>> {
         for value in self.cache.values_mut() {
             value.used = false;
             value.new = false;
@@ -88,7 +88,7 @@ impl<A> Cache<A> for TopCache<A> {
 }
 
 impl<'a, A> Cache<A> for ChildCache<'a, A> {
-    fn render(&mut self, item: Arc<Render<A>>) -> Arc<VNode<A>> {
+    fn render(&mut self, item: Arc<dyn Render<A>>) -> Arc<VNode<A>> {
         let (node, item) = self.top.get(item);
         node.unwrap_or_else(|| {
             let node = Arc::new(item.render(self));
@@ -99,7 +99,7 @@ impl<'a, A> Cache<A> for ChildCache<'a, A> {
 }
 
 impl<A> Cache<A> for NoCache {
-    fn render(&mut self, item: Arc<Render<A>>) -> Arc<VNode<A>> {
+    fn render(&mut self, item: Arc<dyn Render<A>>) -> Arc<VNode<A>> {
         Arc::new(item.render(self))
     }
 }

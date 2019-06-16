@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 use im::Vector;
+use serde_derive::{Serialize, Deserialize};
 
 #[serde(rename_all = "lowercase")]
 #[derive(Serialize, Deserialize, Clone)]
@@ -132,7 +133,7 @@ impl<A> fmt::Debug for VProperty<A> {
     }
 
     #[cfg(not(feature = "nightly"))]
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             VProperty::Action(_) => f.debug_tuple("Action").field(&"<non-debug>").finish(),
             VProperty::Text(text) => f.debug_tuple("Text").field(text).finish(),

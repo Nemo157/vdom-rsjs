@@ -1,5 +1,5 @@
-use ::{VNode, VTag, VPatch};
+use crate::{VNode, VPatch};
 
-pub fn diff<A>(prev: VNode<A>, next: VNode<A>) -> VPatch<A> {
+pub fn diff<A>(_prev: VNode<A>, _next: VNode<A>) -> VPatch<A> {
     unimplemented!()
 }

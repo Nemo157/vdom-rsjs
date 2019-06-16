@@ -4,7 +4,7 @@ use std::borrow::Cow;
 
 use im::Vector;
 
-use {VTag, VProperty, node::IntoSharedVNode};
+use crate::{VTag, VProperty, node::IntoSharedVNode};
 
 impl<A> VTag<A> {
     pub fn attr(mut self, attr: impl Into<Cow<'static, str>>, value: impl Into<Cow<'static, str>>) -> Self {
